@@ -2,7 +2,7 @@ import { bakeAuthorization } from "../src";
 import { UserRoles, MyResourceConfig, DOC_CONFIG, ToDo } from "./setup";
 
 interface AuthUser {
-  roles: UserRoles[];
+  role: UserRoles;
   userId: string;
 }
 
@@ -10,9 +10,9 @@ const { hasPermission } = bakeAuthorization<
   UserRoles,
   AuthUser,
   MyResourceConfig,
-  "multiRole"
+  "singleRole"
 >({
-  userRoleMode: "multiRole",
+  userRoleMode: "singleRole",
   actionDocsConfig: DOC_CONFIG,
   permissionsConfig: {
     admin: {
@@ -49,9 +49,9 @@ const { hasPermission } = bakeAuthorization<
   },
 });
 
-describe("Authorization Tests", () => {
+describe("Authorization Tests - Single Role", () => {
   test("admin should have full permission for all actions", () => {
-    const adminUser: AuthUser = { roles: [UserRoles.Admin], userId: "admin1" };
+    const adminUser: AuthUser = { role: UserRoles.Admin, userId: "admin1" };
 
     expect(hasPermission(adminUser, "todos", "read")).toBe(true);
     expect(hasPermission(adminUser, "todos", "write")).toBe(true);
@@ -60,7 +60,7 @@ describe("Authorization Tests", () => {
 
   test("moderator should only have read permission", () => {
     const moderatorUser: AuthUser = {
-      roles: [UserRoles.Moderator],
+      role: UserRoles.Moderator,
       userId: "mod1",
     };
 
@@ -70,7 +70,7 @@ describe("Authorization Tests", () => {
   });
 
   test("user should have read permission but restricted write and delete", () => {
-    const regularUser: AuthUser = { roles: [UserRoles.User], userId: "user1" };
+    const regularUser: AuthUser = { role: UserRoles.User, userId: "user1" };
 
     expect(hasPermission(regularUser, "todos", "read")).toBe(true);
     expect(hasPermission(regularUser, "todos", "write")).toBe(false);
@@ -78,7 +78,7 @@ describe("Authorization Tests", () => {
   });
 
   test("user should have delete permission if they are the author", () => {
-    const authorUser: AuthUser = { roles: [UserRoles.User], userId: "user1" };
+    const authorUser: AuthUser = { role: UserRoles.User, userId: "user1" };
     const resourceData: ToDo = {
       authorId: "user1",
       title: "title",
@@ -91,7 +91,7 @@ describe("Authorization Tests", () => {
   });
 
   test("user should not have delete permission if they are not the author", () => {
-    const regularUser: AuthUser = { roles: [UserRoles.User], userId: "user2" };
+    const regularUser: AuthUser = { role: UserRoles.User, userId: "user2" };
     const resourceData: ToDo = {
       authorId: "user1",
       title: "title",
@@ -112,7 +112,7 @@ describe("Authorization Tests", () => {
   });
 
   test("should generate correct permission description for actions", () => {
-    const user: AuthUser = { roles: [UserRoles.User], userId: "user1" };
+    const user: AuthUser = { role: UserRoles.User, userId: "user1" };
     const resourceData: ToDo = {
       authorId: "user1",
       title: "title",
@@ -126,7 +126,7 @@ describe("Authorization Tests", () => {
 
   test("beta tester should have permission to view beta resource", () => {
     const betaTester: AuthUser = {
-      roles: [UserRoles.BetaTester, UserRoles.Admin],
+      role: UserRoles.BetaTester,
       userId: "beta1",
     };
 
@@ -134,7 +134,7 @@ describe("Authorization Tests", () => {
   });
 
   test("if not beta tester, should not have permission to view beta resource", () => {
-    const regularUser: AuthUser = { roles: [UserRoles.User], userId: "user1" };
+    const regularUser: AuthUser = { role: UserRoles.User, userId: "user1" };
 
     expect(hasPermission(regularUser, "betaResource", "view")).toBe(false);
   });
