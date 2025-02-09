@@ -1,0 +1,33 @@
+{
+  "name": "rolebaker",
+  "version": "1.0.0",
+  "description": "RoleBaker is a flexible, TypeScript-safe ABAC (Attribute-Based Access Control) library that manages role-based permissions for resources and actions. It supports both multi-role and single-role scenarios, with automatic documentation generation and no additional dependencies, making it framework-agnostic.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Viacheslav Tkachenko",
+    "email": "t.viacheslav00@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tkachenko0/RoleBaker"
+  },
+  "bugs": {
+    "url": "https://github.com/tkachenko0/RoleBaker/issues"
+  },
+  "keywords": [
+    "ABAC",
+    "access control",
+    "authorization",
+    "role-based",
+    "role-based-access-control",
+    "permissions"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
