@@ -7,7 +7,7 @@ export enum UserRoles {
   BetaTester = "betaTester",
 }
 
-export type ToDo = {
+export type ToDoModel = {
   title: string;
   description: string;
   authorId: string;
@@ -16,7 +16,7 @@ export type ToDo = {
 export interface MyResourceConfig extends ResourceConfig {
   resources: {
     todos: {
-      dataType: ToDo;
+      dataType: ToDoModel;
       action: "read" | "write" | "delete";
     };
     betaResource: {
