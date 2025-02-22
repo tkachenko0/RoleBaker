@@ -1,5 +1,9 @@
 # RoleBaker 🎂
 
+
+Scrivere l'access controll non e' mai facile, e neanche poi scrivere una documentazione comprensibile cercando di
+fare il giro del codice nei punti piu innestati e cercare di capire chi e cosa puo fare nellea pro
+
 **RoleBaker** is a powerful, flexible library for handling **Attribute-Based Access Control (ABAC)** with type safety in a **framework-agnostic** way. It simplifies managing user permissions and generating automatic documentation, providing a clear and structured approach to handling user roles and resource actions.
 
 ---
