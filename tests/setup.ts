@@ -17,38 +17,22 @@ export interface MyResourceConfig extends ResourceConfig {
   resources: {
     todos: {
       dataType: ToDo;
-      actions: {
-        read: null;
-        write: null;
-        delete: null;
-      };
+      action: "read" | "write" | "delete";
     };
     betaResource: {
       dataType: string;
-      actions: {
-        view: null;
-      };
+      action: "view";
     };
   };
 }
 
-export const DOC_CONFIG: ActionDescriptionConfig<MyResourceConfig> = {
-  actionDescriptions: {
-    todos: {
-      read: {
-        description: "Read to-dos",
-      },
-      write: {
-        description: "Write to-dos",
-      },
-      delete: {
-        description: "Delete to-dos",
-      },
-    },
-    betaResource: {
-      view: {
-        description: "View beta resource",
-      },
-    },
+export const ACTIONS_DOC: ActionDescriptionConfig<MyResourceConfig> = {
+  todos: {
+    read: "Read to-dos",
+    write: "Write to-dos",
+    delete: "Delete to-dos",
+  },
+  betaResource: {
+    view: "View beta resource",
   },
 };
