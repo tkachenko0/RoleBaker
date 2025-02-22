@@ -12,6 +12,7 @@ Writing access control is never easy, nor is writing understandable documentatio
 - **⚖️ Single & Multi-Role Support** – Supports both single-role users and multi-role configurations.
 - **🛡️ Attribute-Based Access Control (ABAC)** – Define permissions based on roles and dynamic attributes.
 - **🔄 Flexible Permission Logic** – Supports both simple boolean checks and complex function-based rules.
+- **✅ Highly Tested** – Ensures reliability and stability with comprehensive test coverage.
 
 ---
 
