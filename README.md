@@ -7,21 +7,27 @@
 ## 🛠️ Features & Benefits
 
 ### 1. **Attribute-Based Access Control (ABAC)** 🛡️
+
 RoleBaker allows you to define permissions based on attributes (e.g., user roles, resource data), providing flexibility in handling access control.
 
 ### 2. **Type Safety** 🔒
+
 The library ensures that all roles, resources, and actions are defined as literal types, not generic strings, ensuring type safety throughout the application. This avoids bugs related to string mismatches and helps maintain a robust access control structure.
 
 ### 3. **Framework-Agnostic** 🌍
+
 RoleBaker is designed to work in any JavaScript/TypeScript environment, without being tied to a specific framework. Whether you’re building with Node.js, React, Angular, or anything else, RoleBaker fits right in.
 
 ### 4. **Automatic Documentation** 📚
+
 RoleBaker automatically generates documentation for your access control configurations. This makes it easier to manage and understand permissions across different roles and resources. It can also be used to automatically generate tables for roles and permissions analysis.
 
 ### 5. **Support for Single or Multiple Roles** ⚖️
+
 RoleBaker supports both single and multi-role user structures, making it versatile for applications with different user models. You can configure each role's permissions across multiple resources and actions.
 
 ### 6. **Flexibility** 🔄
+
 The library provides flexibility in how permissions are defined and checked. Permissions can be set to simple booleans or complex functions that take user data and resource information into account.
 
 ---
@@ -82,22 +88,20 @@ export interface MyResourceConfig extends ResourceConfig {
 }
 
 export const DOC_CONFIG: ActionDescriptionConfig<MyResourceConfig> = {
-  actionDescriptions: {
-    todos: {
-      read: {
-        description: "Read to-dos",
-      },
-      write: {
-        description: "Write to-dos",
-      },
-      delete: {
-        description: "Delete to-dos",
-      },
+  todos: {
+    read: {
+      description: "Read to-dos",
     },
-    betaResource: {
-      view: {
-        description: "View beta resource",
-      },
+    write: {
+      description: "Write to-dos",
+    },
+    delete: {
+      description: "Delete to-dos",
+    },
+  },
+  betaResource: {
+    view: {
+      description: "View beta resource",
     },
   },
 };
@@ -113,7 +117,7 @@ const { hasPermission } = bakeAuthorization<
   "singleRole"
 >({
   userRoleMode: "singleRole",
-  actionDocsConfig: DOC_CONFIG,
+  actionDocs: DOC_CONFIG,
   permissionsConfig: {
     admin: {
       todos: {
@@ -150,7 +154,7 @@ const { hasPermission } = bakeAuthorization<
   "multiRole"
 >({
   userRoleMode: "multiRole",
-  actionDocsConfig: DOC_CONFIG,
+  actionDocs: DOC_CONFIG,
   permissionsConfig: {
     admin: {
       todos: {
@@ -194,7 +198,9 @@ You can use `hasPermission` to check if a user can perform a specific action on 
 ```typescript
 const user = { roles: ["user"], userId: "123" };
 
-const canDeleteToDo = hasPermission(user, "todos", "delete", { authorId: "123" });
+const canDeleteToDo = hasPermission(user, "todos", "delete", {
+  authorId: "123",
+});
 console.log(canDeleteToDo); // true if the user is the author, otherwise false
 ```
 
@@ -212,7 +218,7 @@ const { generatePermissionDocs } = bakeAuthorization<
   "multiRole"
 >({
   userRoleMode: "multiRole",
-  actionDocsConfig: DOC_CONFIG,
+  actionDocs: DOC_CONFIG,
   permissionsConfig: {
     admin: {
       todos: {

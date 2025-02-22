@@ -1,36 +1,17 @@
-/**
- * Represents the name of a resource.
- */
 type ResourceName = string;
 
-/**
- * Represents the name of an action that can be performed on a resource.
- */
 type ActionName = string;
 
-/**
- * Represents the configuration for an action, which is currently null.
- */
-type ActionConfig = null;
-
-/**
- * Defines the base configuration structure for resources and actions.
- */
 export interface ResourceConfig {
   resources: Record<
     ResourceName,
     {
-      /** The type of data associated with the resource. */
       dataType: unknown;
-      /** The available actions for the resource. */
-      actions: Record<ActionName, ActionConfig>;
+      action: string;
     }
   >;
 }
 
-/**
- * Defines role-based permissions for given roles, configuration, and authenticated user type.
- */
 export type ResourceActionPermissionsMap<
   Roles extends string,
   Config extends ResourceConfig,
@@ -39,41 +20,27 @@ export type ResourceActionPermissionsMap<
   [role in Roles]: ResourceActionPermissions<Config, AuthUser>;
 };
 
-/**
- * Represents permissions for each resource and its actions.
- */
 type ResourceActionPermissions<
   Config extends ResourceConfig,
   AuthUser
 > = Partial<{
   [R in keyof Config["resources"]]: {
-    [A in keyof Config["resources"][R]["actions"]]: PermissionValidation<
+    [A in Config["resources"][R]["action"]]: PermissionValidation<
       AuthUser,
       Config["resources"][R]["dataType"]
     >;
   };
 }>;
 
-/**
- * Defines a permission check mechanism, which can be a boolean or a function with a description.
- */
 type PermissionValidation<AuthUser, DataType> =
   | boolean
   | {
-      /** Function to check if a user has permission based on data. */
       checkFunction: (user: AuthUser, resourceData?: DataType) => boolean;
-      /** Description of the permission check logic. */
-      description: string;
+      description?: string;
     };
 
-/**
- * Defines role modes: single role or multi-role.
- */
 type RoleModeBase = "multiRole" | "singleRole";
 
-/**
- * Represents an authenticated user with either single or multiple roles.
- */
 type BaseAuthUser<
   Roles extends string,
   RoleMode extends RoleModeBase
@@ -81,23 +48,14 @@ type BaseAuthUser<
   ? SingleRoleAuthUser<Roles>
   : MultipleRolesAuthUser<Roles>;
 
-/**
- * Represents a user with a single role.
- */
 type SingleRoleAuthUser<Roles extends string> = {
   role: Roles;
 };
 
-/**
- * Represents a user with multiple roles.
- */
 type MultipleRolesAuthUser<Roles extends string> = {
   roles: Roles[];
 };
 
-/**
- * Checks if a user has multiple roles.
- */
 function isMultiRoleUser<Roles extends string>(
   user: BaseAuthUser<Roles, RoleModeBase>,
   userRoleMode: RoleModeBase
@@ -105,21 +63,15 @@ function isMultiRoleUser<Roles extends string>(
   return userRoleMode === "multiRole";
 }
 
-/**
- * Represents the return type for the `genPermit` function, providing permission checks and documentation generation.
- */
 type GenPermitReturn<
   Roles extends string,
   RoleMode extends RoleModeBase,
   AuthUser extends BaseAuthUser<Roles, RoleMode>,
   Config extends ResourceConfig
 > = {
-  /**
-   * Checks if a user has permission to perform an action on a resource.
-   */
   hasPermission: <
     R extends keyof Config["resources"],
-    A extends keyof Config["resources"][R]["actions"]
+    A extends Config["resources"][R]["action"]
   >(
     user: AuthUser | null,
     resource: R,
@@ -127,61 +79,32 @@ type GenPermitReturn<
     data?: Config["resources"][R]["dataType"]
   ) => boolean;
 
-  /**
-   * Generates documentation for the (Attribute-Based Access Control) configuration.
-   */
   generatePermissionDocs: () => PermissionDocumentationReport;
 };
 
-/**
- * Represents documentation configuration with action descriptions.
- */
 export type ActionDescriptionConfig<C extends ResourceConfig> = {
-  actionDescriptions: {
-    [R in keyof C["resources"]]: {
-      [A in keyof C["resources"][R]["actions"]]: {
-        description: string;
-      };
-    };
+  [R in keyof C["resources"]]: {
+    [A in C["resources"][R]["action"]]: string;
   };
 };
 
-/**
- * Generates permission checks and documentation based on roles, configuration, and documentation configuration.
- * @param userRoleMode The mode for user roles: single or multi-role.
- * @param permissionsConfig The configuration for role-based permissions.
- * @param actionDocsConfig The configuration for action descriptions.
- * @returns Permission checks and documentation generation.
- * @template Roles The type of roles.
- * @template AuthUser The type of authenticated user.
- * @template Config The type of resource configuration.
- * @template RoleMode The type of role mode.
- */
 export function bakeAuthorization<
   Roles extends string,
   AuthUser extends BaseAuthUser<Roles, RoleMode>,
   Config extends ResourceConfig,
-  RoleMode extends RoleModeBase
+  RoleMode extends RoleModeBase =  AuthUser extends SingleRoleAuthUser<Roles> ? "singleRole" : "multiRole"
 >({
   userRoleMode,
   permissionsConfig,
-  actionDocsConfig,
+  actionDocs,
 }: {
   userRoleMode: RoleMode;
   permissionsConfig: ResourceActionPermissionsMap<Roles, Config, AuthUser>;
-  actionDocsConfig: ActionDescriptionConfig<Config>;
+  actionDocs: ActionDescriptionConfig<Config>;
 }): GenPermitReturn<Roles, RoleMode, AuthUser, Config> {
-  /**
-   * Determines if a user has permission for a given action on a resource.
-   * @param authUser The authenticated user.
-   * @param resource The resource to check.
-   * @param action The action to check.
-   * @param resourceData The data associated with the resource.
-   * @returns True if the user has permission; otherwise, false.
-   */
   function hasPermission<
     R extends keyof Config["resources"],
-    A extends keyof Config["resources"][R]["actions"]
+    A extends Config["resources"][R]["action"]
   >(
     authUser: AuthUser | null,
     resource: R,
@@ -210,10 +133,6 @@ export function bakeAuthorization<
       : PermissionValidation.checkFunction?.(authUser, resourceData) ?? false;
   }
 
-  /**
-   * Generates documentation report based on the configuration.
-   * @returns The documentation report.
-   */
   function generatePermissionDocs(): PermissionDocumentationReport {
     const roles = Object.keys(permissionsConfig) as Roles[];
     const mapResourceNameToActions = new Map<ResourceName, Set<ActionName>>();
@@ -252,7 +171,8 @@ export function bakeAuthorization<
             continue;
           }
 
-          const PermissionValidation = resourceConfig[action];
+          const PermissionValidation =
+            resourceConfig[action as keyof typeof resourceConfig];
           if (
             PermissionValidation == null ||
             PermissionValidation == undefined
@@ -266,9 +186,9 @@ export function bakeAuthorization<
               ? "Allowed"
               : "Denied";
           } else {
-            report[resource][action][
-              role
-            ] = `Conditional: ${PermissionValidation.description}`;
+            report[resource][action][role] = `Conditional: ${
+              PermissionValidation.description || ""
+            }`;
           }
         }
       }
@@ -278,7 +198,7 @@ export function bakeAuthorization<
     for (const resource of Object.keys(report)) {
       for (const action of Object.keys(report[resource])) {
         const permissionDescription =
-          actionDocsConfig.actionDescriptions[resource][action].description;
+          actionDocs[resource][action as keyof typeof actionDocs.resource];
         const row: PermissionDocumentationReport["reportRows"][number] = [
           resource,
           action,
@@ -326,17 +246,11 @@ export function bakeAuthorization<
   };
 }
 
-/**
- * Represents the status of an action-role relationship.
- */
 export type ActionPermissionStatus =
   | "Allowed"
   | "Denied"
   | `Conditional: ${string}`;
 
-/**
- * Defines the structure for the documentation.
- */
 export type PermissionDocumentationReport = {
   userRoleMode: RoleModeBase;
   report: Record<

@@ -1,5 +1,5 @@
 import { bakeAuthorization } from "../src";
-import { UserRoles, MyResourceConfig, DOC_CONFIG, ToDo } from "./setup";
+import { UserRoles, MyResourceConfig, ACTIONS_DOC, ToDo } from "./setup";
 
 interface AuthUser {
   roles: UserRoles[];
@@ -9,42 +9,30 @@ interface AuthUser {
 const { hasPermission } = bakeAuthorization<
   UserRoles,
   AuthUser,
-  MyResourceConfig,
-  "multiRole"
+  MyResourceConfig
 >({
   userRoleMode: "multiRole",
-  actionDocsConfig: DOC_CONFIG,
+  actionDocs: ACTIONS_DOC,
   permissionsConfig: {
     admin: {
-      todos: {
-        read: true,
-        write: true,
-        delete: true,
-      },
+      todos: { read: true, write: true, delete: true },
     },
     moderator: {
-      todos: {
-        read: true,
-        write: false,
-        delete: false,
-      },
+      todos: { read: true, write: false, delete: false },
     },
     user: {
       todos: {
         read: true,
         write: false,
         delete: {
-          checkFunction: (authUser, resourceData) => {
-            return resourceData?.authorId === authUser.userId;
-          },
+          checkFunction: (authUser, resourceData) =>
+            resourceData?.authorId === authUser.userId,
           description: "Only the author can delete their own to-dos",
         },
       },
     },
     betaTester: {
-      betaResource: {
-        view: true,
-      },
+      betaResource: { view: true },
     },
   },
 });
