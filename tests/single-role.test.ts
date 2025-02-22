@@ -25,8 +25,7 @@ const { hasPermission } = bakeAuthorization<
         read: true,
         write: false,
         delete: {
-          checkFunction: (authUser, resourceData) =>
-            resourceData?.authorId === authUser.userId,
+          checkFunction: (authUser, todo) => todo?.authorId === authUser.userId,
           description: "Only the author can delete their own to-dos",
         },
       },
