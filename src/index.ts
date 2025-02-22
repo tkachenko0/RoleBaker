@@ -100,7 +100,7 @@ export function bakeAuthorization<
 }: {
   userRoleMode: RoleMode;
   permissionsConfig: ResourceActionPermissionsMap<Roles, Config, AuthUser>;
-  actionDocs: ActionDescriptionConfig<Config>;
+  actionDocs?: ActionDescriptionConfig<Config>;
 }): GenPermitReturn<Roles, RoleMode, AuthUser, Config> {
   function hasPermission<
     R extends keyof Config["resources"],
@@ -134,6 +134,11 @@ export function bakeAuthorization<
   }
 
   function generatePermissionDocs(): PermissionDocumentationReport {
+    if (!actionDocs) {
+      throw new Error(
+        "Action documentation is required for generating permission documentation. Please provide the actionDocs parameter."
+      );
+    }
     const roles = Object.keys(permissionsConfig) as Roles[];
     const mapResourceNameToActions = new Map<ResourceName, Set<ActionName>>();
 
