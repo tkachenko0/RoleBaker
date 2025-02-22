@@ -38,6 +38,9 @@ Find usage examples for **single-role** and **multi-role** models in the officia
 
 🔗 [RoleBaker Documentation](https://role-baker-docs.vercel.app/)
 
+
+![Doc Image](./images/doc-image.png)
+
 ### **📖 Framework-Specific Guides**
 
 - **React** → [Guide](https://role-baker-docs.vercel.app/frameworks/react)
