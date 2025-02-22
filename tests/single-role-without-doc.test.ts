@@ -1,5 +1,5 @@
 import { bakeAuthorization } from "../src";
-import { UserRoles, MyResourceConfig, ToDo } from "./setup";
+import { UserRoles, MyResourceConfig, ToDoModel } from "./setup";
 
 interface AuthUser {
   role: UserRoles;
@@ -64,7 +64,7 @@ describe("Authorization Tests - Single Role", () => {
 
   test("user should have delete permission if they are the author", () => {
     const authorUser: AuthUser = { role: UserRoles.User, userId: "user1" };
-    const resourceData: ToDo = {
+    const resourceData: ToDoModel = {
       authorId: "user1",
       title: "title",
       description: "description",
@@ -77,7 +77,7 @@ describe("Authorization Tests - Single Role", () => {
 
   test("user should not have delete permission if they are not the author", () => {
     const regularUser: AuthUser = { role: UserRoles.User, userId: "user2" };
-    const resourceData: ToDo = {
+    const resourceData: ToDoModel = {
       authorId: "user1",
       title: "title",
       description: "description",
@@ -98,7 +98,7 @@ describe("Authorization Tests - Single Role", () => {
 
   test("should generate correct permission description for actions", () => {
     const user: AuthUser = { role: UserRoles.User, userId: "user1" };
-    const resourceData: ToDo = {
+    const resourceData: ToDoModel = {
       authorId: "user1",
       title: "title",
       description: "description",
