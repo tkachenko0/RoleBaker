@@ -6,7 +6,7 @@ interface AuthUser {
   userId: string;
 }
 
-const { hasPermission } = bakeAuthorization<
+const { hasPermission, generatePermissionDocs } = bakeAuthorization<
   UserRoles,
   AuthUser,
   MyResourceConfig
@@ -122,5 +122,9 @@ describe("Authorization Tests - Single Role", () => {
     const regularUser: AuthUser = { role: UserRoles.User, userId: "user1" };
 
     expect(hasPermission(regularUser, "betaResource", "view")).toBe(false);
+  });
+
+  test("if no actionDoc provided, generatePermissionDocs should throw error", () => {
+    expect(() => generatePermissionDocs()).toThrowError();
   });
 });
