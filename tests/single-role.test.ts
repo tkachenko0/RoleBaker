@@ -2,8 +2,9 @@ import { bakeAuthorization } from "../src";
 import { UserRoles, MyResourceConfig, ACTIONS_DOC, ToDoModel } from "./setup";
 
 interface AuthUser {
-  role: UserRoles;
   userId: string;
+  role: UserRoles;
+  // other user properties
 }
 
 const { hasPermission } = bakeAuthorization<
