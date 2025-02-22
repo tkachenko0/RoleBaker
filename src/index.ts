@@ -92,7 +92,9 @@ export function bakeAuthorization<
   Roles extends string,
   AuthUser extends BaseAuthUser<Roles, RoleMode>,
   Config extends ResourceConfig,
-  RoleMode extends RoleModeBase =  AuthUser extends SingleRoleAuthUser<Roles> ? "singleRole" : "multiRole"
+  RoleMode extends RoleModeBase = AuthUser extends SingleRoleAuthUser<Roles>
+    ? "singleRole"
+    : "multiRole"
 >({
   userRoleMode,
   permissionsConfig,
@@ -134,11 +136,6 @@ export function bakeAuthorization<
   }
 
   function generatePermissionDocs(): PermissionDocumentationReport {
-    if (!actionDocs) {
-      throw new Error(
-        "Action documentation is required for generating permission documentation. Please provide the actionDocs parameter."
-      );
-    }
     const roles = Object.keys(permissionsConfig) as Roles[];
     const mapResourceNameToActions = new Map<ResourceName, Set<ActionName>>();
 
@@ -192,7 +189,7 @@ export function bakeAuthorization<
               : "Denied";
           } else {
             report[resource][action][role] = `Conditional: ${
-              PermissionValidation.description || ""
+              PermissionValidation.description || "No description provided"
             }`;
           }
         }
@@ -202,12 +199,13 @@ export function bakeAuthorization<
     const reportRows: PermissionDocumentationReport["reportRows"] = [];
     for (const resource of Object.keys(report)) {
       for (const action of Object.keys(report[resource])) {
-        const permissionDescription =
-          actionDocs[resource][action as keyof typeof actionDocs.resource];
+        const actionDescription = !!actionDocs
+          ? actionDocs[resource][action as keyof typeof actionDocs.resource]
+          : "No description provided";
         const row: PermissionDocumentationReport["reportRows"][number] = [
           resource,
           action,
-          permissionDescription,
+          actionDescription,
         ];
 
         for (const role of roles) {
