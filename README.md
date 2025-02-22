@@ -55,6 +55,8 @@ yarn add rolebaker
 Here’s how you can define roles and permissions for a simple to-do app:
 
 ```typescript
+// user.model.ts
+
 export enum UserRoles {
   Admin = "admin",
   User = "user",
@@ -62,81 +64,68 @@ export enum UserRoles {
   BetaTester = "betaTester",
 }
 
-export type ToDo = {
+export type AuthUser = {
+  userId: string;
+  role: UserRoles;
+  // other fields
+};
+```
+
+```typescript
+// ToDoModel.model.ts
+
+export type ToDoModel = {
   title: string;
   description: string;
   authorId: string;
-};
-
-export interface MyResourceConfig extends ResourceConfig {
-  resources: {
-    todos: {
-      dataType: ToDo;
-      actions: {
-        read: null;
-        write: null;
-        delete: null;
-      };
-    };
-    betaResource: {
-      dataType: string;
-      actions: {
-        view: null;
-      };
-    };
-  };
-}
-
-export const DOC_CONFIG: ActionDescriptionConfig<MyResourceConfig> = {
-  todos: {
-    read: {
-      description: "Read to-dos",
-    },
-    write: {
-      description: "Write to-dos",
-    },
-    delete: {
-      description: "Delete to-dos",
-    },
-  },
-  betaResource: {
-    view: {
-      description: "View beta resource",
-    },
-  },
 };
 ```
 
 You can then use `bakeAuthorization` to generate permission checks for a user:
 
 ```typescript
+import { ResourceConfig, bakeAuthorization } from "rolebaker";
+import { ToDoModel, AuthUser, UserRoles } from "your-file";
+
+export interface MyResourceConfig extends ResourceConfig {
+  resources: {
+    todos: {
+      dataType: ToDoModel;
+      action: "read" | "write" | "delete";
+    };
+    betaResource: {
+      dataType: string;
+      action: "view";
+    };
+  };
+}
+
 const { hasPermission } = bakeAuthorization<
   UserRoles,
-  { role: UserRoles; userId: string },
-  MyResourceConfig,
-  "singleRole"
+  AuthUser,
+  MyResourceConfig
 >({
   userRoleMode: "singleRole",
-  actionDocs: DOC_CONFIG,
+  actionDocs: ACTIONS_DOC,
   permissionsConfig: {
     admin: {
-      todos: {
-        read: true,
-        write: true,
-        delete: true,
-      },
+      todos: { read: true, write: true, delete: true },
+    },
+    moderator: {
+      todos: { read: true, write: false, delete: false },
     },
     user: {
       todos: {
         read: true,
         write: false,
         delete: {
-          checkFunction: (authUser, resourceData) => {
-            return resourceData?.authorId === authUser.userId;
-          },
+          checkFunction: (authUser, todo) => todo?.authorId === authUser.userId,
           description: "Only the author can delete their own to-dos",
         },
       },
+    },
+    betaTester: {
+      betaResource: { view: true },
     },
   },
 });
@@ -147,48 +136,7 @@ const { hasPermission } = bakeAuthorization<
 RoleBaker also supports users with multiple roles. Here’s how you can define permissions for a user with multiple roles:
 
 ```typescript
-const { hasPermission } = bakeAuthorization<
-  UserRoles,
-  { roles: UserRoles[]; userId: string },
-  MyResourceConfig,
-  "multiRole"
->({
-  userRoleMode: "multiRole",
-  actionDocs: DOC_CONFIG,
-  permissionsConfig: {
-    admin: {
-      todos: {
-        read: true,
-        write: true,
-        delete: true,
-      },
-    },
-    moderator: {
-      todos: {
-        read: true,
-        write: false,
-        delete: false,
-      },
-    },
-    user: {
-      todos: {
-        read: true,
-        write: false,
-        delete: {
-          checkFunction: (authUser, resourceData) => {
-            return resourceData?.authorId === authUser.userId;
-          },
-          description: "Only the author can delete their own to-dos",
-        },
-      },
-    },
-    betaTester: {
-      betaResource: {
-        view: true,
-      },
-    },
-  },
-});
+
 ```
 
 ### **Permission Checking**
@@ -198,10 +146,10 @@ You can use `hasPermission` to check if a user can perform a specific action on 
 ```typescript
 const user = { roles: ["user"], userId: "123" };
 
-const canDeleteToDo = hasPermission(user, "todos", "delete", {
+const canDeleteToDoModel = hasPermission(user, "ToDoModels", "delete", {
   authorId: "123",
 });
-console.log(canDeleteToDo); // true if the user is the author, otherwise false
+console.log(canDeleteToDoModel); // true if the user is the author, otherwise false
 ```
 
 ---
@@ -211,39 +159,7 @@ console.log(canDeleteToDo); // true if the user is the author, otherwise false
 You can also generate the permission documentation report:
 
 ```typescript
-const { generatePermissionDocs } = bakeAuthorization<
-  UserRoles,
-  { roles: UserRoles[]; userId: string },
-  MyResourceConfig,
-  "multiRole"
->({
-  userRoleMode: "multiRole",
-  actionDocs: DOC_CONFIG,
-  permissionsConfig: {
-    admin: {
-      todos: {
-        read: true,
-        write: true,
-        delete: true,
-      },
-    },
-    user: {
-      todos: {
-        read: true,
-        write: false,
-        delete: {
-          checkFunction: (authUser, resourceData) => {
-            return resourceData?.authorId === authUser.userId;
-          },
-          description: "Only the author can delete their own to-dos",
-        },
-      },
-    },
-  },
-});
 
-const permissionDocs = generatePermissionDocs();
-console.log(permissionDocs);
 ```
 
 The generated documentation will include:
