@@ -44,7 +44,3 @@ Find usage examples for **single-role** and **multi-role** models in the officia
 - **Angular** → [Guide](https://role-baker-docs.vercel.app/frameworks/angular)
 - **Vue** → [Guide](https://role-baker-docs.vercel.app/frameworks/vue)
 - **Express** → [Guide](https://role-baker-docs.vercel.app/frameworks/express)
-
----
-
-This version improves readability, fixes typos, and provides a more structured flow. Let me know if you'd like any refinements! 🚀
