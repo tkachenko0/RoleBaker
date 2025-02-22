@@ -8,9 +8,9 @@ export enum UserRoles {
 }
 
 export type ToDoModel = {
+  authorId: string;
   title: string;
   description: string;
-  authorId: string;
 };
 
 export interface MyResourceConfig extends ResourceConfig {
