@@ -23,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/tkachenko0/RoleBaker/issues"
   },
-  "homepage": "https://role-baker-docs.vercel.app/",
+  "homepage": "https://role-baker.vercel.app/",
   "keywords": [
     "ABAC",
     "access control",

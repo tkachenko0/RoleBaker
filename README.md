@@ -36,14 +36,14 @@ yarn add rolebaker
 
 Find usage examples for **single-role** and **multi-role** models in the official documentation:
 
-🔗 [RoleBaker Documentation](https://role-baker-docs.vercel.app/)
+🔗 [RoleBaker Documentation](https://role-baker.vercel.app/)
 
 
 ![Doc Image](./images/doc-image.png)
 
 ### **📖 Framework-Specific Guides**
 
-- **React** → [Guide](https://role-baker-docs.vercel.app/frameworks/react)
-- **Angular** → [Guide](https://role-baker-docs.vercel.app/frameworks/angular)
-- **Vue** → [Guide](https://role-baker-docs.vercel.app/frameworks/vue)
-- **Express** → [Guide](https://role-baker-docs.vercel.app/frameworks/express)
+- **React** → [Guide](https://role-baker.vercel.app/frameworks/react)
+- **Angular** → [Guide](https://role-baker.vercel.app/frameworks/angular)
+- **Vue** → [Guide](https://role-baker.vercel.app/frameworks/vue)
+- **Express** → [Guide](https://role-baker.vercel.app/frameworks/express)
