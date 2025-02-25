@@ -45,5 +45,5 @@ Find usage examples for **single-role** and **multi-role** models in the officia
 
 - **React** → [Guide](https://role-baker.vercel.app/frameworks/react)
 - **Angular** → [Guide](https://role-baker.vercel.app/frameworks/angular)
-- **Vue** → [Guide](https://role-baker.vercel.app/frameworks/vue)
 - **Express** → [Guide](https://role-baker.vercel.app/frameworks/express)
+- **Other frameworks** → [Guide](https://role-baker.vercel.app/frameworks/other)
