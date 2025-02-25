@@ -37,5 +37,16 @@ export default defineAppConfig({
       exclude: [],
       fluid: true,
     },
+    footer: {
+      textLinks: [
+        {
+          href: "/donations/buy-me-a-coffee",
+          text: "Buy me a coffee",
+          rel: "noopener",
+        }
+
+      ],
+      fluid: true,
+    }
   },
 });
