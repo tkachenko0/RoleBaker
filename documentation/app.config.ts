@@ -15,9 +15,9 @@ export default defineAppConfig({
       // }
     },
     github: {
-      dir: "./content",
+      dir: "./documentation/content",
       branch: "main",
-      repo: "role-baker-docs",
+      repo: "RoleBaker",
       owner: "tkachenko0",
       edit: true,
     },
